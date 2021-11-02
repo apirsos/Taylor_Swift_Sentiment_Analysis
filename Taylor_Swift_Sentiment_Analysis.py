@@ -5,7 +5,7 @@ Created on Tue Nov  2 13:46:22 2021
 
 @author: apirsos
 """
-
+# Import packages
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -30,10 +30,9 @@ pandas_bokeh.output_notebook()
 import os
 os.getcwd()
 
+# Import Data
 lyrics_df_2 = pd.read_csv('/Users/apirsos/Downloads/taylor_swift_lyrics.csv', encoding='Latin1')
 lyrics_df_2.head()
-
-
 
 #Data Preparation
 #Make entire text lowercase
@@ -42,10 +41,12 @@ lyrics_df_2['lyric'] = [r.lower() for r in lyrics_df_2['lyric']]
 lyrics_df_2['lyric'] = lyrics_df_2['lyric'].str.replace("[^a-zA-Z#]"," ")
 from nltk.corpus import stopwords
 stop_words = stopwords.words('english')
+# Add in shake to stop words because vader lexicon scores it as negative
+# It's used 78 times in Shake It Off and pulls down the sentiment of 1989 as an album
 MyStopWords = ['like', 'ooh', 'im', 'youre', 'shake', 'oh', 'na', 'ill', 'ey', 'ive', 'id', 'hes', 'la', 'youll', 'youve', 'ha', 'uh', 'mm', 'theyll', 'ta', 'youd', 'ah', 'oohoohoohoohooh', 'theyre', 'ahaah', 'em', 'haah']
 stop_words.extend(MyStopWords)
 
-#Remove stop words
+#Remove stop words function
 def remove_stopwords(rev):
     rev_new = " ".join([i for i in rev if i not in stop_words])
     return rev_new
@@ -59,8 +60,7 @@ lyrics_df_2['lyric'] = [remove_stopwords(r.split()) for r in lyrics_df_2['lyric'
 #drop empty lines
 lyrics_df_2 = lyrics_df_2[lyrics_df_2['lyric']!=""]
 
-
-
+#Calculate polarity
 lyrics_df_2['polarity'] = lyrics_df_2.apply(lambda x: 
         TextBlob(x['lyric']).sentiment.polarity, axis = 1)
 lyrics_df_2.head()
@@ -97,3 +97,6 @@ def freq_words (x, terms = 20):
 freq_words(lyrics_df_2['lyric'])
 
 freq_words(lyrics_df_2, 20)
+
+#Additional visualizations were created in Excel
+#Significance testing between album sentiments were completed in R
